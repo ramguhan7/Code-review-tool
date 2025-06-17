@@ -101,7 +101,8 @@ def check_column_alias_suffix(sql):
         if match:
             alias = match.group(1)
             # Validate suffixes only on the alias — not the data type
-            if not re.search(r'(_ID|_CD|_CNT|_DSC|_FLG|_AMT|_PCT|_DTS|_NBR)$', alias):
+            if not re.search(r'(ID|CD|CNT|DSC|FLG|AMT|PCT|DTS|NBR|FLG|PCT|SEQ|NM|VAL|TXT|DT)$', alias):
+
                 issues.append(f"Alias `{alias}` does not use an approved uppercase suffix (_ID, _CD, etc.)")
 
     return issues
