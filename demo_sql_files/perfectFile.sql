@@ -79,6 +79,6 @@ FROM
     LEFT JOIN {{source_data}}.lawson.GLNAMES d
         ON pop.DIS_ACCT_UNIT = d.ACCT_UNIT
         AND pop.COMPANY = d.COMPANY
-    LEFT JOIN {{source_data}}.lawson.acactivity AS a
+    LEFT JOIN shca_source_data.lawson.acactivity AS a
         ON pop.ACTIVITY = a.activity
 ;

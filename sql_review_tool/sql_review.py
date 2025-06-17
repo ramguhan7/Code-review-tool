@@ -17,6 +17,8 @@ def review_file(file_path):
     issues += check_columns_use_alias(sql)
     issues += check_column_alias_suffix(sql)
     issues += check_line_comment_usage(sql)
+    issues += check_hardcoded_database_names(sql)
+
 
     return issues
 

@@ -115,3 +115,24 @@ def check_line_comment_usage(sql):
         if '--' in line and not line.strip().startswith('--'):
             issues.append(f"Line {i}: Use block comments (/* */) instead of inline '--': `{line.strip()}`")
     return issues
+
+# ✅ Rule 12: Enforce parameterization
+def check_hardcoded_database_names(sql):
+    issues = []
+    # Define hardcoded database prefixes
+    banned_dbs = {
+        'shca_source_data': '{{source_data}}',
+        'shca_data_marts_dev': '{{data_marts}}',
+        'shca_data_marts_test': '{{data_marts}}',
+        'shca_data_marts': '{{data_marts}}'
+    }
+
+    for db, expected in banned_dbs.items():
+        pattern = re.compile(rf'\b{re.escape(db)}\.', re.IGNORECASE)
+        matches = pattern.findall(sql)
+        for _ in matches:
+            issues.append(
+                f"Hardcoded DB `{db}` detected. Use `{expected}` instead."
+            )
+
+    return issues
