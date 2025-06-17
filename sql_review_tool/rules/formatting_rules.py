@@ -2,7 +2,23 @@ import re
 
 # ✅ Rule 1: UPPERCASE SQL keywords
 def check_uppercase_keywords(sql):
-    keywords = re.findall(r'\b(select|from|where|join|as|on|and|or|insert|update|delete)\b', sql)
+    keywords = re.findall(r'\b('
+        r'select|from|where|join|inner join|left join|right join|full join|on|and|or|'
+        r'insert|into|values|update|set|delete|create|alter|drop|truncate|'
+        r'distinct|group by|order by|having|limit|offset|'
+        r'union|union all|intersect|except|exists|not|in|is null|is not null|'
+        r'like|between|case|when|then|else|end|as|'
+        r'cast|try_cast|coalesce|nullif|if|with|top|over|partition by|'
+        r'rank|dense_rank|row_number|'
+        r'dateadd|datediff|current_date|current_timestamp|now|year|month|day|'
+        r'weekofyear|dayofweek|'
+        r'cache|uncache|refresh|optimize|zorder|using|options|tablesample|'
+        r'merge|when matched|when not matched|copy into|autoloader|streaming|'
+        r'watermark|trigger|output mode|struct|array|map|explode|posexplode|'
+        r'lateral view|input_file_name|monotonically_increasing_id|'
+        r'to_date|to_timestamp|date_trunc|date_format|lag|lead|ntile|first|last|'
+        r'greatest|least|size|element_at|get_json_object'
+        r')\b', sql, re.IGNORECASE)
     return [f"Keyword '{kw}' should be uppercase." for kw in keywords]
 
 # ✅ Rule 2: Avoid SELECT *
@@ -139,7 +155,7 @@ def check_hardcoded_database_names(sql):
 # ✅ Rule 13: Alias suffixes check
 def check_missing_alias_suffix(sql):
     issues = []
-    approved_suffixes = ['ID', 'NM', 'CD', 'CNT', 'DSC', 'FLG', 'AMT', 'PCT', 'DTS', 'NBR', 'TXT']
+    approved_suffixes = ['ID', 'NM', 'CD', 'CNT', 'DSC', 'FLG', 'AMT', 'PCT', 'DTS', 'NBR', 'TXT', 'SEQ']
 
     select_match = re.search(r'\bSELECT\b\s+(.*?)\bFROM\b', sql, re.IGNORECASE | re.DOTALL)
     if not select_match:
