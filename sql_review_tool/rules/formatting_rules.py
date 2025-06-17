@@ -30,13 +30,23 @@ def check_non_ansi_joins(sql):
 # ✅ Rule 5: Preceding comma formatting
 def check_column_formatting(sql):
     issues = []
-    select_block = re.search(r'SELECT\s+(.*?)\s+FROM', sql, re.IGNORECASE | re.DOTALL)
-    if select_block:
-        lines = select_block.group(1).splitlines()
-        for line in lines:
-            if ',' in line and not line.strip().startswith(',') and not line.strip().startswith('--'):
-                issues.append(f"Column line should begin with a comma: `{line.strip()}`")
+
+    # Extract the SELECT block only (between SELECT and FROM)
+    select_match = re.search(r'\bSELECT\b\s+(.*?)\bFROM\b', sql, re.IGNORECASE | re.DOTALL)
+    if not select_match:
+        return issues
+
+    select_block = select_match.group(1)
+    lines = [line.strip() for line in select_block.strip().splitlines() if line.strip()]
+
+    for i, line in enumerate(lines):
+        if i == 0:
+            continue  # Skip first line after SELECT
+        if not line.startswith(',') and not line.startswith('--'):
+            issues.append(f"Column line should begin with a comma: `{line}`")
+
     return issues
+
 
 # ✅ Rule 6: No ISNULL()
 def check_no_isnull(sql):
