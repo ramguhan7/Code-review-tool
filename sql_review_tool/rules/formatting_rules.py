@@ -83,7 +83,7 @@ def check_columns_use_alias(sql):
 # ✅ Rule 10: Column alias must end in UPPERCASE suffix
 def check_column_alias_suffix(sql):
     issues = []
-    suffixes = ['ID', 'NM', 'CD', 'CNT', 'DSC', 'FLG', 'AMT', 'PCT', 'DTS', 'NBR', 'TXT']
+    suffixes = ['ID', 'NM', 'CD', 'CNT', 'DSC', 'FLG', 'AMT', 'PCT', 'DTS', 'NBR', 'TXT','SEQ']
 
     # Extract SELECT block only
     select_match = re.search(r'\bSELECT\b\s+(.*?)\bFROM\b', sql, re.IGNORECASE | re.DOTALL)
@@ -133,5 +133,32 @@ def check_hardcoded_database_names(sql):
             issues.append(
                 f"Hardcoded DB `{db}` detected. Use `{expected}` instead."
             )
+
+    return issues
+
+# ✅ Rule 13: Alias suffixes check
+def check_missing_alias_suffix(sql):
+    issues = []
+    approved_suffixes = ['ID', 'NM', 'CD', 'CNT', 'DSC', 'FLG', 'AMT', 'PCT', 'DTS', 'NBR', 'TXT']
+
+    select_match = re.search(r'\bSELECT\b\s+(.*?)\bFROM\b', sql, re.IGNORECASE | re.DOTALL)
+    if not select_match:
+        return issues
+
+    select_block = select_match.group(1)
+    columns = re.split(r',(?![^\(\)]*\))', select_block)
+
+    for col in columns:
+        col = col.strip()
+        # Check if there's an AS alias
+        match = re.search(r'\bAS\s+([a-zA-Z_][a-zA-Z0-9_]*)$', col, re.IGNORECASE)
+        if match:
+            alias = match.group(1)
+            if not any(alias.upper().endswith(suffix) for suffix in approved_suffixes):
+                issues.append(
+                    f"Alias `{alias}` does not end with an approved suffix ({', '.join(approved_suffixes)})"
+                )
+        else:
+            issues.append(f"Column `{col}` is missing an alias with an approved suffix.")
 
     return issues
