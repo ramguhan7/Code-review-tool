@@ -20,7 +20,9 @@ jobs:
         with:
           python-version: '3.10'
 
+      - name: ➕ Add repo to PYTHONPATH
+        run: echo "PYTHONPATH=$GITHUB_WORKSPACE" >> $GITHUB_ENV
+
       - name: 🔍 Run SQL Review Tool
         run: |
-          echo "PYTHONPATH=$GITHUB_WORKSPACE" >> $GITHUB_ENV
           python3 -m sql_review_tool.main demo_sql_files
