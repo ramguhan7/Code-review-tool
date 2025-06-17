@@ -18,7 +18,7 @@ def check_uppercase_keywords(sql):
         r'lateral view|input_file_name|monotonically_increasing_id|'
         r'to_date|to_timestamp|date_trunc|date_format|lag|lead|ntile|first|last|'
         r'greatest|least|size|element_at|get_json_object'
-        r')\b', sql, re.IGNORECASE)
+        r')\b', sql)
     return [f"Keyword '{kw}' should be uppercase." for kw in keywords]
 
 # ✅ Rule 2: Avoid SELECT *
