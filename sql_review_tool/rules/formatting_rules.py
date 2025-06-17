@@ -106,3 +106,12 @@ def check_column_alias_suffix(sql):
                 issues.append(f"Alias `{alias}` does not use an approved uppercase suffix (_ID, _CD, etc.)")
 
     return issues
+
+# ✅ Rule 11: Enforce block comments
+def check_line_comment_usage(sql):
+    issues = []
+    lines = sql.splitlines()
+    for i, line in enumerate(lines, start=1):
+        if '--' in line and not line.strip().startswith('--'):
+            issues.append(f"Line {i}: Use block comments (/* */) instead of inline '--': `{line.strip()}`")
+    return issues

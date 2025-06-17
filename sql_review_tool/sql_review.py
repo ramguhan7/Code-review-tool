@@ -16,6 +16,8 @@ def review_file(file_path):
     issues += check_missing_table_alias(sql)
     issues += check_columns_use_alias(sql)
     issues += check_column_alias_suffix(sql)
+    issues += check_line_comment_usage(sql)
+
     return issues
 
 def review_directory(directory):
