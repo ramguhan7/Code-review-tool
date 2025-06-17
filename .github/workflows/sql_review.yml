@@ -1,0 +1,22 @@
+name: SQL Code Review
+
+on:
+  pull_request:
+    paths:
+      - '**/*.sql'
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Run SQL Review
+        run: |
+          python3 sql_review_tool/main.py demo_sql_files
