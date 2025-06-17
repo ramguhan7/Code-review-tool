@@ -2,6 +2,8 @@ name: SQL Code Review
 
 on:
   pull_request:
+    branches:
+      - main
     paths:
       - '**/*.sql'
 
