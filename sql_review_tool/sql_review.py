@@ -1,5 +1,6 @@
 import os
-from rules.formatting_rules import *
+from sql_review_tool.rules.formatting_rules import *
+
 
 def review_file(file_path):
     with open(file_path, 'r') as f:
