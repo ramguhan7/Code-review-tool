@@ -1,6 +1,56 @@
 import re
 
-# Rule: Table alias is required for FROM/JOIN clauses
+# ✅ Rule 1: UPPERCASE SQL keywords
+def check_uppercase_keywords(sql):
+    keywords = re.findall(r'\b(select|from|where|join|as|on|and|or|insert|update|delete)\b', sql)
+    return [f"Keyword '{kw}' should be uppercase." for kw in keywords]
+
+# ✅ Rule 2: Avoid SELECT *
+def check_select_star(sql):
+    return ["Avoid using SELECT *"] if re.search(r'\bSELECT\s+\*\b', sql, re.IGNORECASE) else []
+
+# ✅ Rule 3: Use AS for aliasing
+def check_alias_with_as(sql):
+    select_block = re.search(r'\bSELECT\s+(.*?)\bFROM\b', sql, re.IGNORECASE | re.DOTALL)
+    if not select_block:
+        return []
+    columns = select_block.group(1).split(',')
+    violations = []
+    for col in columns:
+        if re.search(r'\s+\w+$', col) and ' AS ' not in col.upper():
+            violations.append(f"Column alias should use 'AS': `{col.strip()}`")
+    return violations
+
+# ✅ Rule 4: Avoid non-ANSI joins (*= or =*)
+def check_non_ansi_joins(sql):
+    if '*=' in sql or '=*' in sql:
+        return ["Avoid non-ANSI join syntax (*= or =*)"]
+    return []
+
+# ✅ Rule 5: Preceding comma formatting
+def check_column_formatting(sql):
+    issues = []
+    select_block = re.search(r'SELECT\s+(.*?)\s+FROM', sql, re.IGNORECASE | re.DOTALL)
+    if select_block:
+        lines = select_block.group(1).splitlines()
+        for line in lines:
+            if ',' in line and not line.strip().startswith(',') and not line.strip().startswith('--'):
+                issues.append(f"Column line should begin with a comma: `{line.strip()}`")
+    return issues
+
+# ✅ Rule 6: No ISNULL()
+def check_no_isnull(sql):
+    return ["Use COALESCE() instead of ISNULL()"] if re.search(r'\bISNULL\s*\(', sql, re.IGNORECASE) else []
+
+# ✅ Rule 7: Use single quotes for string constants
+def check_string_constants(sql):
+    issues = []
+    double_quotes = re.findall(r'"([^"]*?\d+[^"]*?)"', sql)
+    for match in double_quotes:
+        issues.append(f"Use single quotes instead of double quotes for: \"{match}\"")
+    return issues
+
+# ✅ Rule 8: Require table aliases in FROM
 def check_missing_table_alias(sql):
     issues = []
     pattern = re.compile(r'FROM\s+([a-zA-Z_][\w\.]*)\s*(?:,|\n|$)', re.IGNORECASE)
@@ -9,10 +59,9 @@ def check_missing_table_alias(sql):
             issues.append(f"Table `{match}` is missing an alias.")
     return issues
 
-# Rule: Column references should be qualified with alias (e.g., o.column)
+# ✅ Rule 9: Column must be prefixed with table alias
 def check_columns_use_alias(sql):
     issues = []
-    # Simplified assumption: If SELECT has bare column names without ".", flag them
     select_block = re.search(r'SELECT\s+(.*?)\s+FROM', sql, re.IGNORECASE | re.DOTALL)
     if select_block:
         columns = [c.strip() for c in select_block.group(1).split(',')]
@@ -21,7 +70,7 @@ def check_columns_use_alias(sql):
                 issues.append(f"Column `{col}` is not qualified with a table alias.")
     return issues
 
-# Rule: Column alias must end in uppercase suffix (e.g., _ID, _CD, _CNT, _DSC)
+# ✅ Rule 10: Column alias must end in UPPERCASE suffix
 def check_column_alias_suffix(sql):
     issues = []
     matches = re.findall(r'\s+AS\s+([a-zA-Z_]\w+)', sql, re.IGNORECASE)

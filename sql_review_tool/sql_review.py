@@ -12,6 +12,9 @@ def review_file(file_path):
     issues += check_column_formatting(sql)
     issues += check_no_isnull(sql)
     issues += check_string_constants(sql)
+    issues += check_missing_table_alias(sql)
+    issues += check_columns_use_alias(sql)
+    issues += check_column_alias_suffix(sql)
     return issues
 
 def review_directory(directory):
