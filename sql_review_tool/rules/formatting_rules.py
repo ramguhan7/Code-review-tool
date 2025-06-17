@@ -73,8 +73,23 @@ def check_columns_use_alias(sql):
 # ✅ Rule 10: Column alias must end in UPPERCASE suffix
 def check_column_alias_suffix(sql):
     issues = []
-    matches = re.findall(r'\s+AS\s+([a-zA-Z_]\w+)', sql, re.IGNORECASE)
-    for alias in matches:
-        if not re.search(r'(_ID|_CD|_CNT|_DSC|_FLG|_AMT|_PCT|_DTS)$', alias):
-            issues.append(f"Alias `{alias}` does not use an approved uppercase suffix (_ID, _CD, etc.)")
+    
+    # Extract SELECT block only
+    select_match = re.search(r'\bSELECT\b\s+(.*?)\bFROM\b', sql, re.IGNORECASE | re.DOTALL)
+    if not select_match:
+        return []
+
+    select_block = select_match.group(1)
+
+    # Split columns while ignoring commas inside parentheses (e.g., CAST(...))
+    columns = re.split(r',(?![^\(]*\))', select_block)
+
+    for col in columns:
+        col = col.strip()
+        alias_match = re.search(r'\bAS\s+([a-zA-Z_][a-zA-Z0-9_]*)\b', col, re.IGNORECASE)
+        if alias_match:
+            alias = alias_match.group(1)
+            if not re.search(r'(_ID|_CD|_CNT|_DSC|_FLG|_AMT|_PCT|_DTS|_NBR)$', alias):
+                issues.append(f"Alias `{alias}` does not use an approved uppercase suffix (_ID, _CD, etc.)")
+
     return issues
