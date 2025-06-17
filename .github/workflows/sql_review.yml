@@ -8,15 +8,19 @@ on:
 jobs:
   review:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout
+      - name: 📥 Checkout code
         uses: actions/checkout@v3
 
-      - name: Setup Python
+      - name: 🐍 Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.10'
 
-      - name: Run SQL Review
+      - name: ➕ Add repo root to PYTHONPATH
+        run: echo "PYTHONPATH=$GITHUB_WORKSPACE" >> $GITHUB_ENV
+
+      - name: 🔍 Run SQL Review Tool
         run: |
-          python3 sql_review_tool/main.py demo_sql_files
+          python3 -m sql_review_tool.main demo_sql_files
