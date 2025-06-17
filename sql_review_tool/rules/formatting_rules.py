@@ -83,29 +83,28 @@ def check_columns_use_alias(sql):
 # ✅ Rule 10: Column alias must end in UPPERCASE suffix
 def check_column_alias_suffix(sql):
     issues = []
+    suffixes = ['ID', 'NM', 'CD', 'CNT', 'DSC', 'FLG', 'AMT', 'PCT', 'DTS', 'NBR', 'TXT']
 
-    # Match the SELECT block
+    # Extract SELECT block only
     select_match = re.search(r'\bSELECT\b\s+(.*?)\bFROM\b', sql, re.IGNORECASE | re.DOTALL)
     if not select_match:
-        return []
+        return issues
 
     select_block = select_match.group(1)
-
-    # Split by commas outside of parentheses
     columns = re.split(r',(?![^\(\)]*\))', select_block)
 
     for col in columns:
         col = col.strip()
-        # Match the alias using AS — only if it's at the top level
         match = re.search(r'\bAS\s+([a-zA-Z_][a-zA-Z0-9_]*)$', col, re.IGNORECASE)
         if match:
             alias = match.group(1)
-            # Validate suffixes only on the alias — not the data type
-            if not re.search(r'(ID|CD|CNT|DSC|FLG|AMT|PCT|DTS|NBR|FLG|PCT|SEQ|NM|VAL|TXT|DT)$', alias):
-
-                issues.append(f"Alias `{alias}` does not use an approved uppercase suffix (_ID, _CD, etc.)")
+            if not any(alias.upper().endswith(suffix) for suffix in suffixes):
+                issues.append(
+                    f"Alias `{alias}` does not end with an approved suffix ({', '.join(suffixes)})"
+                )
 
     return issues
+
 
 # ✅ Rule 11: Enforce block comments
 def check_line_comment_usage(sql):
