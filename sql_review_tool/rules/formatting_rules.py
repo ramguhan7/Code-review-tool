@@ -2,6 +2,10 @@ import re
 
 # ✅ Rule 1: UPPERCASE SQL keywords
 def check_uppercase_keywords(sql):
+    # Remove inline (--) and block (/* */) comments before checking
+    sql = re.sub(r'/\*.*?\*/', '', sql, flags=re.DOTALL)
+    sql = re.sub(r'--.*', '', sql)
+
     keywords = re.findall(r'\b('
         r'select|from|where|join|inner join|left join|right join|full join|on|and|or|'
         r'insert|into|values|update|set|delete|create|alter|drop|truncate|'
@@ -18,8 +22,10 @@ def check_uppercase_keywords(sql):
         r'lateral view|input_file_name|monotonically_increasing_id|'
         r'to_date|to_timestamp|date_trunc|date_format|lag|lead|ntile|first|last|'
         r'greatest|least|size|element_at|get_json_object'
-        r')\b', sql)
-    return [f"Keyword '{kw}' should be uppercase." for kw in keywords]
+        r')\b', sql, flags=re.IGNORECASE)
+
+    return [f"Keyword '{kw}' should be uppercase." for kw in keywords if kw != kw.upper()]
+
 
 # ✅ Rule 2: Avoid SELECT *
 def check_select_star(sql):
