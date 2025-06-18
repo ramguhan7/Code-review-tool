@@ -76,7 +76,7 @@ FROM
         ON pop.COMPANY = b1.COMPANY
     LEFT JOIN {{source_data}}.lawson.APCOMPANY b2
         ON pop.COMPANY = b2.COMPANY
-    LEFT JOIN shca_data_marts.sdm_supply_chain.AccountFact d
+    LEFT JOIN {{source_data}}.lawson.GLNAMES d
         ON pop.DIS_ACCT_UNIT = d.ACCT_UNIT
         AND pop.COMPANY = d.COMPANY
     LEFT JOIN shca_source_data.lawson.acactivity AS a
