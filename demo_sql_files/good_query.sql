@@ -4,5 +4,5 @@ SELECT
     ,SUM(o.amount) AS TotalAMT
 FROM orders o
 JOIN customers c
-ON orders.customer_id = customers.id
+ON orders.customer_id = customers.id --may need to remove this join in future
 GROUP BY c.id
