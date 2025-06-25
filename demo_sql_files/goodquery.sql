@@ -4,5 +4,7 @@ SELECT
     ,SUM(o.amount) AS TotalAMT
 FROM orders o
 JOIN customers c
-ON orders.customer_id = customers.id --may need to remove this join in future
+ON orders.customer_id = customers.id
+JOIN shca_source_data.LAwson.APENVAST lawson
+ON c.id = LAWSON.id --may need to remove this join in future
 GROUP BY c.id --group by needed
