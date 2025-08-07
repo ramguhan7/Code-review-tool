@@ -16,4 +16,4 @@ ON c.id = LAWSON.id --may need to remove this join in future
 GROUP BY c.id --group by needed
 )
 
-SELECT  * FROM CTE 
+SELECT  DISTINCT * FROM CTE 
