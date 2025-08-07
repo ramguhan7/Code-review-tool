@@ -201,3 +201,60 @@ def check_title_comment_block(sql, file_path=None):
             "Missing or improperly formatted title comment block. Expected block with Entity Name, Author, Description, and Change Log."
         )
     return issues
+
+# ✅ Rule 15: No Select * 
+def check_select_star(sql):
+    issues = []
+
+    # Remove line and block comments first
+    sql_cleaned = re.sub(r'--.*?$|/\*[\s\S]*?\*/', '', sql, flags=re.MULTILINE)
+
+    # Match SELECT * or SELECT DISTINCT * (any whitespace variations)
+    pattern = re.compile(r'\bSELECT\s+(DISTINCT\s+)?\*\b', re.IGNORECASE)
+
+    if pattern.search(sql_cleaned):
+        issues.append("Avoid using SELECT *. Specify the required columns explicitly.")
+    
+    return issues
+
+# ✅ Rule 16: Table Alias must be capitalized
+def check_alias_uppercase(sql):
+    issues = []
+
+    # Remove comments
+    sql_cleaned = re.sub(r'--.*?$|/\*[\s\S]*?\*/', '', sql, flags=re.MULTILINE)
+
+    # Match FROM or JOIN followed by table and alias
+    pattern = re.compile(r'\b(?:FROM|JOIN)\s+[\w\.]+\s+([a-z_][a-z0-9_]*)\b', re.IGNORECASE)
+
+    for match in pattern.findall(sql_cleaned):
+        if not match.isupper():
+            issues.append(f"Table alias `{match}` should be uppercase.")
+    
+    return issues
+
+# ✅ Rule 17: All NULLs must be CAST AS DataType
+def check_casted_nulls(sql):
+    issues = []
+
+    # Remove comments so we don't falsely catch NULL in commented lines
+    sql_cleaned = re.sub(r'--.*?$|/\*[\s\S]*?\*/', '', sql, flags=re.MULTILINE)
+
+    # Match lines with: NULL [optional whitespace] AS [column_alias]
+    pattern = re.compile(r'\bNULL\s+AS\s+[a-zA-Z_][\w]*\b', re.IGNORECASE)
+
+    for match in pattern.findall(sql_cleaned):
+        issues.append("All NULLs must be cast to a specific data type. Use CAST(NULL AS TYPE) instead.")
+    
+    return issues
+
+# ✅ Rule 18: DISTINCT check warning
+def check_distinct_usage(sql):
+    warnings = []
+    sql_cleaned = re.sub(r'--.*?$|/\*[\s\S]*?\*/', '', sql, flags=re.MULTILINE)
+
+    pattern = re.compile(r'\bSELECT\s+DISTINCT\b', re.IGNORECASE)
+    if pattern.search(sql_cleaned):
+        warnings.append(("warning", "DISTINCT is used. Confirm this is intentional and not masking a join issue."))
+
+    return warnings

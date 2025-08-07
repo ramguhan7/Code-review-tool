@@ -20,7 +20,11 @@ def review_file(file_path):
     issues += check_hardcoded_database_names(sql)
     issues += check_missing_alias_suffix(sql)
     issues += check_title_comment_block(sql, file_path)
-
+    issues += check_select_star(sql)
+    issues += check_alias_uppercase(sql)
+    issues += check_casted_nulls(sql)
+    # Warning rules
+    issues += check_distinct_usage(sql)
 
     return issues
 
