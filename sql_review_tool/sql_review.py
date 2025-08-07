@@ -19,7 +19,7 @@ def review_file(file_path):
     issues += check_line_comment_usage(sql)
     issues += check_hardcoded_database_names(sql)
     issues += check_missing_alias_suffix(sql)
-
+    issues += check_title_comment_block(sql, file_path)
 
 
     return issues

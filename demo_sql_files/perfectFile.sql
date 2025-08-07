@@ -1,3 +1,11 @@
+/****************************************************************************************************************
+Entity Name: pefect file 
+Author: RGG
+Description: SQL has the all standards followed 
+Change Log:
+*****************************************************************************************************************/
+
+
 SELECT
       CAST(TRIM(pop.API_OBJ_ID) AS DECIMAL(38, 0)) AS APIObjectID
     , CAST(TRIM(pop.DIST_SEQ_NBR) AS DECIMAL(38, 0)) AS DistributionSequenceNBR

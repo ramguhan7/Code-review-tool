@@ -184,3 +184,21 @@ def check_missing_alias_suffix(sql):
             issues.append(f"Column `{col}` is missing an alias with an approved suffix.")
 
     return issues
+
+# ✅ Rule 14: Title comment block 
+def check_title_comment_block(sql, file_path=None):
+    """
+    Checks whether the SQL file begins with the expected standard title comment block.
+    """
+    issues = []
+
+    # Get the top portion of the SQL
+    top_lines = '\n'.join(sql.strip().splitlines()[:20])
+
+    # Check that the block starts and ends correctly
+    if not top_lines.startswith("/**") or "Entity Name:" not in top_lines or "Author:" not in top_lines or "Description:" not in top_lines or "Change Log:" not in top_lines or not top_lines.strip().endswith("*/"):
+        issues.append(
+            "Missing or improperly formatted title comment block. Expected block with Entity Name, Author, Description, and Change Log."
+        )
+
+    return issues
