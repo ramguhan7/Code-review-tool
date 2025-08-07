@@ -1,3 +1,9 @@
+/****************************************************************************************************************
+Entity Name: pefect file 
+Author: RGG
+Description: SQL has the all standards followed 
+*****************************************************************************************************************/
+
 SELECT
      c.id AS CustomerID
     ,COUNT(DISTINCT o.order_id) AS TotalOrderCNT
