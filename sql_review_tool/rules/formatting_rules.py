@@ -206,14 +206,17 @@ def check_title_comment_block(sql, file_path=None):
 def check_select_star(sql):
     issues = []
 
-    # Remove line and block comments first
+    # Strip out line and block comments
     sql_cleaned = re.sub(r'--.*?$|/\*[\s\S]*?\*/', '', sql, flags=re.MULTILINE)
 
-    # Match SELECT * or SELECT DISTINCT * (any whitespace variations)
-    pattern = re.compile(r'\bSELECT\s+(DISTINCT\s+)?\*\b', re.IGNORECASE)
+    # Normalize spaces (replace all kinds of whitespace with single space)
+    sql_cleaned = re.sub(r'\s+', ' ', sql_cleaned).strip()
 
+    # Look for SELECT * or SELECT DISTINCT * pattern
+    pattern = re.compile(r'\bSELECT\s+(DISTINCT\s+)?\*', re.IGNORECASE)
+    
     if pattern.search(sql_cleaned):
-        issues.append("Avoid using SELECT *. Specify the required columns explicitly.")
+        issues.append(("error", "Avoid using SELECT *. Specify the required columns explicitly."))
     
     return issues
 
