@@ -1,5 +1,5 @@
 SELECT
-    order_id,
+    order,
     amount as amt,
     NULL AS Dummycolumn --why this
 FROM orders o
