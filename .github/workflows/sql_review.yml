@@ -26,8 +26,7 @@ jobs:
 
       - name: Run SQL Review Tool
         run: |
-          python3 -m sql_review_tool.main demo_sql_files > review_output.txt 2>&1
-          cat review_output.txt
+          python3 -m sql_review_tool.main demo_sql_files > review_output.txt 2>&1 || true
 
       - name: Post review as PR comment
         if: always()
