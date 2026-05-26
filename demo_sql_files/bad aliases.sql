@@ -1,6 +1,6 @@
 SELECT
     order,
-    amount as amt,
+    amount,
     NULL AS Dummycolumn --why this
 FROM orders o
 JOIN customers c ON o.customer_id = c.id --join needed
