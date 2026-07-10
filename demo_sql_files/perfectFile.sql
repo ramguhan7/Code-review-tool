@@ -91,5 +91,5 @@ FROM
         ON pop.DIS_ACCT_UNIT = d.ACCT_UNIT
         AND pop.COMPANY = d.COMPANY
     LEFT JOIN shca_source_data.lawson.acactivity AS a
-        ON pop.ACTIVITY = a.activity --dont need this join 
+        ON pop.ACTIVITY = a.activity /*dont need this join*/
 ;
