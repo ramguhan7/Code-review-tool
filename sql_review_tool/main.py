@@ -1,5 +1,7 @@
 import sys
-from sql_review import review_directory
+# ✅ NEW
+from sql_review_tool.sql_review import review_directory
+
 
 if __name__ == "__main__":
     folder = sys.argv[1] if len(sys.argv) > 1 else input("Enter SQL folder: ").strip()
